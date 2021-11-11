@@ -22,6 +22,27 @@ typedef struct task {
     unsigned int remainingTime;
 } task;
 
+void FirstComeFirstServe(){
+
+}
+
+void RoundRobin(){
+
+}
+
+void ShortestJobFirst(){
+
+}
+
+void ComputeStatistics(){
+
+}
+
+void DisplayStatistics(){
+
+}
+
+
 int main(int argc, char *argv[]){
     char *fileName;
     FILE *file;
@@ -46,4 +67,32 @@ int main(int argc, char *argv[]){
         else printf("Please enter time_quantum for the RR policy!\n");
     }
 
+    fileName = argv[1];
+    if (! (file = fopen(fileName, "r"))) {
+        printf("File %s can't be opened. Please retry ...\n");
+        return EXIT_FAILURE;
+    }
+    printf("Open file: %s\n", fileName);
+
+    int count = 0;
+
+    while (fscanf(file, "%u %u %u", &taskArray[count].pid, &taskArray[count].arrivalTime, &taskArray[count].cpuTime)!= EOF) {
+        count++;
+    }
+ 
+    printf("There are %u tasks loaded from %s ...\n", count, fileName);
+
+    printf("Press any key to continue ...\n");
+    getchar();
+    fclose(file);
+
+    if(strcmp(argv[2], "RR") == 0){
+        
+    } else if(strcmp(argv[2], "FCFS") == 0){
+
+    } else if(strcmp(argv[2], "SRFT") == 0){
+
+    } else {
+        printf("Usage: command file_name [FCFS|RR|SRFT] [time_quantum]\n");
+    }
 }
