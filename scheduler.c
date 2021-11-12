@@ -22,19 +22,19 @@ typedef struct task {
     unsigned int remainingTime;
 } task;
 
-void FirstComeFirstServe(){
+void FirstComeFirstServe(task *taskArray[], task *finishedTaskArray[]){
 
 }
 
-void RoundRobin(){
+void RoundRobin(task *taskArray[], task *finishedTaskArray[]){
 
 }
 
-void ShortestJobFirst(){
+void ShortestJobRemainingFirst(task *taskArray[], task *finishedTaskArray[]){
 
 }
 
-void ComputeStatistics(){
+double ComputeStatistics(task *finishedTaskArray[]){
 
 }
 
@@ -46,7 +46,8 @@ void DisplayStatistics(){
 int main(int argc, char *argv[]){
     char *fileName;
     FILE *file;
-    task taskArray[32];
+    task taskArray[MAX_TASK_NUM];
+    task finishedTaskArray[MAX_TASK_NUM];
 
 
     if (argc < 2 || argc > 4) {
@@ -62,9 +63,12 @@ int main(int argc, char *argv[]){
 
     /* Handle the RR policy */
     if (strcmp(argv[2], "RR") == 0) {
-        if (argc == 4)
-            printf("time_quantum is set to %s\n", argv[3]);  
-        else printf("Please enter time_quantum for the RR policy!\n");
+        if (argc == 4){
+            printf("time_quantum is set to %s\n", argv[3]);
+        } else {
+            printf("Please enter time_quantum for the RR policy!\n");
+            return 0;
+        }
     }
 
     fileName = argv[1];
@@ -87,12 +91,15 @@ int main(int argc, char *argv[]){
     fclose(file);
 
     if(strcmp(argv[2], "RR") == 0){
-        
+        RoundRobin(&taskArray, &finishedTaskArray);
     } else if(strcmp(argv[2], "FCFS") == 0){
-
+        FirstComeFirstServe(&taskArray, &finishedTaskArray);
     } else if(strcmp(argv[2], "SRFT") == 0){
-
+        ShortestJobRemainingFirst(&taskArray, &finishedTaskArray);
     } else {
         printf("Usage: command file_name [FCFS|RR|SRFT] [time_quantum]\n");
+        return 0;
     }
+
+    return EXIT_SUCCESS;
 }
