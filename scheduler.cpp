@@ -8,11 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <vector>
+#include <queue>
 
 using namespace std;
 
-#define MAX_TASK_NUM 32
 
 typedef struct task {
     unsigned int pid;
@@ -25,31 +24,55 @@ typedef struct task {
     unsigned int remainingTime;
 } task;
 
-void FirstComeFirstServe(task *taskArray[], task *finishedTaskArray[]){
-    unsigned int clock;
-    task readyQueue[MAX_TASK_NUM];
-    int rq = 0;
-    int i;
-    while(taskArray[i] != NULL){
-        if(taskArray[i]->arrivalTime <= clock){
-            task thisTask = *taskArray[i];
-            taskArray[i] = NULL;
-            readyQueue[rq] = thisTask;
-            rq++;
+queue<task> FirstComeFirstServe(queue<task> taskArray){
+
+    unsigned int clock = 0;
+    queue<task> readyQueue;
+    queue<task> finishedTaskArray;
+    task *runningTask = NULL;
+    while(!taskArray.empty() || !readyQueue.empty()){
+        while(!taskArray.empty() && taskArray.front().arrivalTime <= clock){
+            readyQueue.push(taskArray.front());
+            taskArray.pop();
         }
-        vector<task> tasks;
+
+        if(!readyQueue.empty()){
+            if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
+                readyQueue.front().startTime=clock;
+                //&runningTask = *readyQueue.front();
+            }
+            if(readyQueue.front().remainingTime==0){
+                readyQueue.front().endTime=clock;
+                finishedTaskArray.push(readyQueue.front());
+                printf("<time %u> process %u is finished...\n", clock, readyQueue.front().pid);
+                readyQueue.pop();
+                if(readyQueue.empty() && taskArray.empty()){
+                    printf("<time %u> All processes finished...\n", clock);
+                    return finishedTaskArray;
+                } else if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
+                    readyQueue.front().startTime=clock;
+                    //*runningTask = readyQueue.front();
+                }
+            }
+            readyQueue.front().remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.front().pid);
+        } else {
+            printf("<time %u> No process is running\n", clock);
+        }
+        clock++;
     }
+    return finishedTaskArray;
 }
 
-void RoundRobin(task *taskArray[], task *finishedTaskArray[]){
-
-}
-
-void ShortestJobRemainingFirst(task *taskArray[], task *finishedTaskArray[]){
+void RoundRobin(queue<task> taskArray, queue<task> finishedTaskArray){
 
 }
 
-double ComputeStatistics(task *finishedTaskArray[]){
+void ShortestJobRemainingFirst(queue<task> taskArray, queue<task> finishedTaskArray){
+
+}
+
+void ComputeStatistics(queue<task> finishedTaskArray){
 
 }
 
@@ -61,8 +84,8 @@ void DisplayStatistics(){
 int main(int argc, char *argv[]){
     char *fileName;
     FILE *file;
-    task taskArray[MAX_TASK_NUM];
-    task finishedTaskArray[MAX_TASK_NUM];
+    queue<task> taskArray;
+    queue<task> finishedTaskArray;
 
 
     if (argc < 2 || argc > 4) {
@@ -88,16 +111,22 @@ int main(int argc, char *argv[]){
 
     fileName = argv[1];
     if (! (file = fopen(fileName, "r"))) {
-        printf("File %s can't be opened. Please retry ...\n");
+        printf("File %s can't be opened. Please retry ...\n", fileName);
         return EXIT_FAILURE;
     }
     printf("Open file: %s\n", fileName);
 
-    int count = 0;
-
-    while (fscanf(file, "%u %u %u", &taskArray[count].pid, &taskArray[count].arrivalTime, &taskArray[count].cpuTime)!= EOF) {
+    unsigned int count = 0;
+    task *t = new task; //https://docs.microsoft.com/en-us/cpp/cpp/new-operator-cpp?view=msvc-170#:~:text=When%20new%20is%20used%20to%20allocate%20memory%20for,deallocate%20the%20memory%20allocated%20with%20the%20new%20operator.
+    while (fscanf(file, "%u %u %u", &t->pid, &t->arrivalTime, &t->cpuTime)!= EOF) { // https://stackoverflow.com/questions/6547602/expression-must-have-class-type
+        t->remainingTime = t->cpuTime;
+        taskArray.push(*t);
+        t = new task;
         count++;
     }
+    /*while (fscanf(file, "%u %u %u", &taskArray[count].pid, &taskArray[count].arrivalTime, &taskArray[count].cpuTime)!= EOF) {
+        count++;
+    }*/
  
     printf("There are %u tasks loaded from %s ...\n", count, fileName);
 
@@ -106,11 +135,11 @@ int main(int argc, char *argv[]){
     fclose(file);
 
     if(strcmp(argv[2], "RR") == 0){
-        RoundRobin(&taskArray, &finishedTaskArray);
+        RoundRobin(taskArray, finishedTaskArray);
     } else if(strcmp(argv[2], "FCFS") == 0){
-        FirstComeFirstServe(&taskArray, &finishedTaskArray);
+        finishedTaskArray = FirstComeFirstServe(taskArray);
     } else if(strcmp(argv[2], "SRFT") == 0){
-        ShortestJobRemainingFirst(&taskArray, &finishedTaskArray);
+        ShortestJobRemainingFirst(taskArray, finishedTaskArray);
     } else {
         printf("Usage: command file_name [FCFS|RR|SRFT] [time_quantum]\n");
         return 0;
