@@ -35,11 +35,9 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
             readyQueue.push(taskArray.front());
             taskArray.pop();
         }
-
         if(!readyQueue.empty()){
             if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
                 readyQueue.front().startTime=clock;
-                //&runningTask = *readyQueue.front();
             }
             if(readyQueue.front().remainingTime==0){
                 readyQueue.front().endTime=clock;
@@ -51,7 +49,6 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
                     return finishedTaskArray;
                 } else if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
                     readyQueue.front().startTime=clock;
-                    //*runningTask = readyQueue.front();
                 }
             }
             readyQueue.front().remainingTime--;
