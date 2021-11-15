@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-            "args": ["task.list","FCFS"],
+            "args": ["task.list","RR", "2"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

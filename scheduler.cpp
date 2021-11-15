@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <queue>
+#include <vector>
 
 using namespace std;
 
@@ -29,7 +30,6 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
     unsigned int clock = 0;
     queue<task> readyQueue;
     queue<task> finishedTaskArray;
-    task *runningTask = NULL;
     while(!taskArray.empty() || !readyQueue.empty()){
         while(!taskArray.empty() && taskArray.front().arrivalTime <= clock){
             readyQueue.push(taskArray.front());
@@ -61,7 +61,52 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
     return finishedTaskArray;
 }
 
-void RoundRobin(queue<task> taskArray, queue<task> finishedTaskArray){
+queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
+    unsigned int last_switch_clock = 0;
+    unsigned int clock = 0;
+    int rq = 0;
+    vector<task> readyQueue;
+    queue<task> finishedTaskArray;
+    while(!taskArray.empty() || !readyQueue.empty()){
+        while(!taskArray.empty() && taskArray.front().arrivalTime <= clock){
+            readyQueue.push_back(taskArray.front());
+            taskArray.pop();
+        }
+        if(!readyQueue.empty()){
+            if(rq >= readyQueue.size()){
+                rq = 0;
+            }
+            if(readyQueue.at(rq).remainingTime == readyQueue.at(rq).cpuTime){
+                readyQueue.at(rq).startTime = clock;
+            }
+            if(readyQueue.at(rq).remainingTime == 0){
+                readyQueue.at(rq).endTime = clock;
+                finishedTaskArray.push(readyQueue.at(rq));
+                printf("<time %u> process %u is finished...\n", clock, readyQueue.at(rq).pid);
+                readyQueue.erase(readyQueue.begin()+rq);
+                if(readyQueue.empty() && taskArray.empty()){
+                    printf("<time %u> All processes finished...\n", clock);
+                    return finishedTaskArray;
+                } else if(readyQueue.at(rq).remainingTime==readyQueue.at(rq).cpuTime){
+                    readyQueue.at(rq).startTime=clock;
+                    last_switch_clock = clock;
+                }
+            }
+            readyQueue.at(rq).remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.at(rq).pid);
+            if(clock - last_switch_clock == time_quantum){
+                last_switch_clock = clock;
+                rq++;
+            }
+        } else {
+            rq = 0;
+            printf("<time %u> No process is running\n", clock);
+        }
+        clock++;
+
+    }
+    return finishedTaskArray;
+
 
 }
 
@@ -132,7 +177,12 @@ int main(int argc, char *argv[]){
     fclose(file);
 
     if(strcmp(argv[2], "RR") == 0){
-        RoundRobin(taskArray, finishedTaskArray);
+        int time_quantum = -1;
+        sscanf(argv[3], "%d", &time_quantum);
+        if(time_quantum<1){
+            printf("Invalid time_quantum, please enter value of 1 or greater");
+        }
+        finishedTaskArray = RoundRobin(taskArray, time_quantum);
     } else if(strcmp(argv[2], "FCFS") == 0){
         finishedTaskArray = FirstComeFirstServe(taskArray);
     } else if(strcmp(argv[2], "SRFT") == 0){
