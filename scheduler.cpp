@@ -73,8 +73,12 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
             taskArray.pop();
         }
         if(!readyQueue.empty()){
-            if(rq >= readyQueue.size()){
-                rq = 0;
+            if(clock - last_switch_clock == time_quantum){
+                last_switch_clock = clock;
+                rq++;
+                if(rq >= readyQueue.size()){
+                    rq = 0;
+                }
             }
             if(readyQueue.at(rq).remainingTime == readyQueue.at(rq).cpuTime){
                 readyQueue.at(rq).startTime = clock;
@@ -84,20 +88,23 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
                 finishedTaskArray.push(readyQueue.at(rq));
                 printf("<time %u> process %u is finished...\n", clock, readyQueue.at(rq).pid);
                 readyQueue.erase(readyQueue.begin()+rq);
+                if(rq >= readyQueue.size()){
+                    rq = 0;
+                }
+                last_switch_clock = clock;
                 if(readyQueue.empty() && taskArray.empty()){
                     printf("<time %u> All processes finished...\n", clock);
                     return finishedTaskArray;
-                } else if(readyQueue.at(rq).remainingTime==readyQueue.at(rq).cpuTime){
+                } else if(readyQueue.empty() && !taskArray.empty()){
+                    continue;
+                }else if(readyQueue.at(rq).remainingTime==readyQueue.at(rq).cpuTime){
                     readyQueue.at(rq).startTime=clock;
-                    last_switch_clock = clock;
+                } else if(readyQueue.at(rq).remainingTime == 0){
+                    continue;
                 }
             }
             readyQueue.at(rq).remainingTime--;
             printf("<time %u> process %u is running\n", clock, readyQueue.at(rq).pid);
-            if(clock - last_switch_clock == time_quantum){
-                last_switch_clock = clock;
-                rq++;
-            }
         } else {
             rq = 0;
             printf("<time %u> No process is running\n", clock);
@@ -106,8 +113,6 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
 
     }
     return finishedTaskArray;
-
-
 }
 
 void ShortestJobRemainingFirst(queue<task> taskArray, queue<task> finishedTaskArray){
