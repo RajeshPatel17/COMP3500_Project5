@@ -12,6 +12,13 @@
 #include <vector>
 #include <math.h>
 
+
+#include "scheduler.h"
+#include "read.h"
+#include "open.h"
+#include "print.h"
+#include "compute.h"
+#include "method.h"
 using namespace std;
 
 
@@ -198,7 +205,7 @@ vector<double> ComputeStatistics(queue<task> finishedTaskArray){
     return stats;
 }
 
-void DisplayStatistics(){
+void DisplayStatistics(vector<double> stats) {
 
 }
 
