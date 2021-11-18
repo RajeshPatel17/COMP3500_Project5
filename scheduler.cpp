@@ -10,6 +10,7 @@
 #include <string.h>
 #include <queue>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -115,12 +116,86 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
     return finishedTaskArray;
 }
 
-void ShortestJobRemainingFirst(queue<task> taskArray, queue<task> finishedTaskArray){
-
+int shortestJobRemaining(vector<task> taskQueue){
+    int shortestTimeRemaining = -1;
+    int index = -1;
+    int i = 0;
+    while(i<taskQueue.size()) {
+        if(taskQueue.at(i).remainingTime < shortestTimeRemaining){
+            shortestTimeRemaining = taskQueue.at(i).remainingTime;
+            index = i;
+        }
+        i++;
+    }
+    return index;
 }
 
-void ComputeStatistics(queue<task> finishedTaskArray){
+queue<task> ShortestJobRemainingFirst(queue<task> taskArray){
 
+    unsigned int clock = 0;
+    vector<task> readyQueue;
+    queue<task> finishedTaskArray;
+    int sjr;
+    while(!taskArray.empty() || !readyQueue.empty()){
+        while(!taskArray.empty() && taskArray.front().arrivalTime <= clock){
+            readyQueue.push_back(taskArray.front());
+            taskArray.pop();
+            sjr = shortestJobRemaining(readyQueue);
+        }
+        if(!readyQueue.empty()){
+            if(readyQueue.at(sjr).remainingTime == readyQueue.at(sjr).cpuTime){
+                readyQueue.at(sjr).startTime = clock;
+            }
+            if(readyQueue.at(sjr).remainingTime == 0){
+                readyQueue.at(sjr).endTime = clock;
+                finishedTaskArray.push(readyQueue.at(sjr));
+                printf("<time %u> process %u is finished...\n", clock, readyQueue.at(sjr).pid);
+                readyQueue.erase(readyQueue.begin()+sjr);
+                sjr = shortestJobRemaining(readyQueue);
+                if(sjr < 0 || readyQueue.at(sjr).remainingTime == 0){
+                    continue;
+                }
+            }
+            readyQueue.at(sjr).remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.at(sjr).pid);
+        } else {
+            printf("<time %u> No process is running\n", clock);
+        }
+        clock++;
+    }
+    return finishedTaskArray;
+}
+
+vector<double> ComputeStatistics(queue<task> finishedTaskArray){
+    double waitTime = 0;
+    double responseTime = 0;
+    double turnaroundTime = 0;
+    double totalCpuTime = 0;
+    double cpuUsage = 0;
+    int finishTime = 0;
+    int tasks = finishedTaskArray.size();
+    while(!finishedTaskArray.empty()) {
+        turnaroundTime += finishedTaskArray.front().endTime - finishedTaskArray.front().arrivalTime;
+
+        waitTime += finishedTaskArray.front().endTime - finishedTaskArray.front().arrivalTime - finishedTaskArray.front().cpuTime;
+
+        totalCpuTime += finishedTaskArray.front().cpuTime;
+
+        responseTime += finishedTaskArray.front().startTime - finishedTaskArray.front().arrivalTime;
+
+        finishTime = max(finishTime, (int)finishedTaskArray.front().endTime);
+
+        finishedTaskArray.pop();
+    }
+    vector<double> stats;
+
+    stats.push_back(waitTime/tasks);
+    stats.push_back(responseTime/tasks);
+    stats.push_back(turnaroundTime/tasks);
+    stats.push_back(totalCpuTime/(double)finishTime);
+
+
+    return stats;
 }
 
 void DisplayStatistics(){
@@ -191,11 +266,13 @@ int main(int argc, char *argv[]){
     } else if(strcmp(argv[2], "FCFS") == 0){
         finishedTaskArray = FirstComeFirstServe(taskArray);
     } else if(strcmp(argv[2], "SRFT") == 0){
-        ShortestJobRemainingFirst(taskArray, finishedTaskArray);
+        finishedTaskArray = ShortestJobRemainingFirst(taskArray);
     } else {
         printf("Usage: command file_name [FCFS|RR|SRFT] [time_quantum]\n");
         return 0;
     }
+
+    vector<double> stats = ComputeStatistics(finishedTaskArray);
 
     return EXIT_SUCCESS;
 }
