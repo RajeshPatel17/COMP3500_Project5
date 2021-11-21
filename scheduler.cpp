@@ -245,7 +245,7 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
     printf("Open file: %s\n", fileName);*/
-    file = open(fileName);
+    *file = open(fileName);
 
     taskArray = readFile(file);
 
