@@ -1,5 +1,5 @@
-#ifndef _SCHEDULER_H_
-#define _SCHEDULER_H_
+#ifndef _SCHEDULER_HPP
+#define _SCHEDULER_HPP
 
 typedef struct task {
     unsigned int pid;

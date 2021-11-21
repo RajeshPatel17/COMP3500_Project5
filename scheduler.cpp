@@ -13,17 +13,17 @@
 #include <math.h>
 
 
-#include "scheduler.h"
-#include "read.cpp"
-#include "open.cpp"
-#include "print.cpp"
-#include "compute.cpp"
-#include "method.cpp"
+//#include "scheduler.h"
+#include "read.hpp"
+#include "open.hpp"
+#include "print.hpp"
+#include "compute.hpp"
+#include "method.hpp"
 
 using namespace std;
 
 
-typedef struct task {
+/*typedef struct task {
     unsigned int pid;
     unsigned int startTime;
     unsigned int endTime;
@@ -32,9 +32,9 @@ typedef struct task {
     unsigned int arrivalTime;
     unsigned int responseTime;
     unsigned int remainingTime;
-} task;
+} task;*/
 
-queue<task> FirstComeFirstServe(queue<task> taskArray){
+/*queue<task> FirstComeFirstServe(queue<task> taskArray){
 
     unsigned int clock = 0;
     queue<task> readyQueue;
@@ -208,7 +208,7 @@ vector<double> ComputeStatistics(queue<task> finishedTaskArray){
 
 void DisplayStatistics(vector<double> stats) {
 
-}
+}*/
 
 
 int main(int argc, char *argv[]){
@@ -239,26 +239,29 @@ int main(int argc, char *argv[]){
         }
     }
 
-    fileName = argv[1];
+    /* = argv[1];
     if (! (file = fopen(fileName, "r"))) {
         printf("File %s can't be opened. Please retry ...\n", fileName);
         return EXIT_FAILURE;
     }
-    printf("Open file: %s\n", fileName);
+    printf("Open file: %s\n", fileName);*/
+    file = open(fileName);
 
-    unsigned int count = 0;
+    taskArray = readFile(file);
+
+    /*unsigned int count = 0;
     task *t = new task; //https://docs.microsoft.com/en-us/cpp/cpp/new-operator-cpp?view=msvc-170#:~:text=When%20new%20is%20used%20to%20allocate%20memory%20for,deallocate%20the%20memory%20allocated%20with%20the%20new%20operator.
     while (fscanf(file, "%u %u %u", &t->pid, &t->arrivalTime, &t->cpuTime)!= EOF) { // https://stackoverflow.com/questions/6547602/expression-must-have-class-type
         t->remainingTime = t->cpuTime;
         taskArray.push(*t);
         t = new task;
         count++;
-    }
+    }*/
     /*while (fscanf(file, "%u %u %u", &taskArray[count].pid, &taskArray[count].arrivalTime, &taskArray[count].cpuTime)!= EOF) {
         count++;
     }*/
  
-    printf("There are %u tasks loaded from %s ...\n", count, fileName);
+    printf("There are %u tasks loaded from %s ...\n", (unsigned int)taskArray.size(), fileName);
 
     printf("Press any key to continue ...\n");
     getchar();
@@ -281,6 +284,6 @@ int main(int argc, char *argv[]){
     }
 
     vector<double> stats = ComputeStatistics(finishedTaskArray);
-
+    DisplayStatistics(stats);
     return EXIT_SUCCESS;
 }

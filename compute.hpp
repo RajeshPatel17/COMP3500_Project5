@@ -1,5 +1,5 @@
-#ifndef _COMPUTE_H
-#define _COMPUTE_H
+#ifndef _COMPUTE_HPP
+#define _COMPUTE_HPP
 
 vector<double> ComputeStatistics(queue<task> finishedTaskArray);
 

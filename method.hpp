@@ -1,5 +1,5 @@
-#ifndef _METHOD_H
-#define _METHOD_H
+#ifndef _METHOD_HPP
+#define _METHOD_HPP
 
 queue<task> FirstComeFirstServe(queue<task> taskArray);
 
