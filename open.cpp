@@ -6,7 +6,7 @@ FILE open(char *filename){
     //fileName = argv[1];
     if (! (file = fopen(filename, "r"))) {
         printf("File %s can't be opened. Please retry ...\n", filename);
-        return;
+        return *file;
     }
     printf("Open file: %s\n", filename);
     return *file;

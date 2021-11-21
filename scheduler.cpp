@@ -14,11 +14,12 @@
 
 
 #include "scheduler.h"
-#include "read.h"
-#include "open.h"
-#include "print.h"
-#include "compute.h"
-#include "method.h"
+#include "read.cpp"
+#include "open.cpp"
+#include "print.cpp"
+#include "compute.cpp"
+#include "method.cpp"
+
 using namespace std;
 
 
