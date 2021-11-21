@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <stdlib.h>
 
 FILE* open(char *filename){

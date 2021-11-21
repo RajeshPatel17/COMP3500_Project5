@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <queue>
 #include "scheduler.hpp"
+
 using namespace std;
 
 vector<double> ComputeStatistics(queue<task> finishedTaskArray){
