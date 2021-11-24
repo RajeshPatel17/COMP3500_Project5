@@ -1,0 +1,39 @@
+(1) How did you separate scheduling mechanism from scheduling policies? 
+    I placed scheduling policies in its own functions and implemented the mechanism for deciding which policy to run
+    in the main file so it does not affect the policies and is easy to expand.
+(2) How did implement the three scheduling algorithms?
+    FCFS: 
+        I took processes off the queue when they arrived and added them to an "arrived" queue. 
+        I then processed the "arrived" queue in order
+    RR: 
+        I took processes off the task queue when they arrived and added them to a vector, which allows for indexing.
+        I then implemented a clock that keeps track of how long the current process has run for.
+        Processes switch when the current process finishes or when it has been executing for the desired length.
+    SRTF: 
+        I took processes off the task queue when they arrived and added them to a vector. 
+        I then calculate which job has the shortest remaining time. I run that process. 
+        This process repeats every clock cycle.
+        When a process finishes, I then check what the next shortest process is and run that one. 
+(3) How did you calculate waiting times?
+    end time - arrival time - cpu time 
+    or turnaround time - cpu time
+(4) How did you calculate response times?
+    start time - arrival time
+(5) How did you calculate turnaround times?
+    end time - arrival time
+(6) How did you implement the command-line parser?
+
+7.2 (6 points) Generality and Error Checking
+(1) How general is your solution?
+    The scheduling policies are obviously specific but everything else is general.
+(2) How easy would it be to add a new scheduling policy into your scheduler? 
+    Yes it would be easy
+(3) Does your program offer input error checking?
+    Yes, I am able to check the input for which scheduling policy is chosen and if the RR time quantum is valid.
+7.3 (3 points) Miscellaneous factors
+(1) Is your code elegant?
+    It is pretty elegant.
+(2) How innovative is your solution? Did you try any ideas not suggested here? 
+    It is extremely innovative. I utilized existing data structures not explicitly shown in class and utilized c++ to leverage them. 
+(3) Did you document all outside sources?
+    Yes, they are in the comments

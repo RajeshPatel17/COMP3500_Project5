@@ -28,7 +28,7 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
                 printf("<time %u> process %u is finished...\n", clock+1, readyQueue.front().pid);
                 readyQueue.pop();
                 if(readyQueue.empty() && taskArray.empty()){
-                    printf("<time %u> All processes finished...\n", clock);
+                    printf("<time %u> All processes finished...\n", clock+1);
                     return finishedTaskArray;
                 } else if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
                     readyQueue.front().startTime=clock;
