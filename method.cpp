@@ -20,10 +20,12 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
             if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){
                 readyQueue.front().startTime=clock;
             }
+            readyQueue.front().remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.front().pid);
             if(readyQueue.front().remainingTime==0){
-                readyQueue.front().endTime=clock;
+                readyQueue.front().endTime=clock+1;
                 finishedTaskArray.push(readyQueue.front());
-                printf("<time %u> process %u is finished...\n", clock, readyQueue.front().pid);
+                printf("<time %u> process %u is finished...\n", clock+1, readyQueue.front().pid);
                 readyQueue.pop();
                 if(readyQueue.empty() && taskArray.empty()){
                     printf("<time %u> All processes finished...\n", clock);
@@ -32,8 +34,6 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
                     readyQueue.front().startTime=clock;
                 }
             }
-            readyQueue.front().remainingTime--;
-            printf("<time %u> process %u is running\n", clock, readyQueue.front().pid);
         } else {
             printf("<time %u> No process is running\n", clock);
         }
@@ -43,7 +43,7 @@ queue<task> FirstComeFirstServe(queue<task> taskArray){
 }
 
 queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
-    unsigned int last_switch_clock = 0;
+    int last_switch_clock = 0;
     unsigned int clock = 0;
     int rq = 0;
     vector<task> readyQueue;
@@ -54,8 +54,8 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
             taskArray.pop();
         }
         if(!readyQueue.empty()){
-            if(clock - last_switch_clock == time_quantum){
-                last_switch_clock = clock;
+            if(last_switch_clock >= time_quantum){
+                last_switch_clock = 0;
                 rq++;
                 if(rq >= readyQueue.size()){
                     rq = 0;
@@ -64,17 +64,19 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
             if(readyQueue.at(rq).remainingTime == readyQueue.at(rq).cpuTime){
                 readyQueue.at(rq).startTime = clock;
             }
+            readyQueue.at(rq).remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.at(rq).pid);
             if(readyQueue.at(rq).remainingTime == 0){
-                readyQueue.at(rq).endTime = clock;
+                readyQueue.at(rq).endTime = clock+1;
                 finishedTaskArray.push(readyQueue.at(rq));
-                printf("<time %u> process %u is finished...\n", clock, readyQueue.at(rq).pid);
+                printf("<time %u> process %u is finished...\n", clock+1, readyQueue.at(rq).pid);
                 readyQueue.erase(readyQueue.begin()+rq);
                 if(rq >= readyQueue.size()){
                     rq = 0;
                 }
-                last_switch_clock = clock;
+                last_switch_clock = -1;
                 if(readyQueue.empty() && taskArray.empty()){
-                    printf("<time %u> All processes finished...\n", clock);
+                    printf("<time %u> All processes finished...\n", clock+1);
                     return finishedTaskArray;
                 } else if(readyQueue.empty() && !taskArray.empty()){
                     continue;
@@ -84,14 +86,12 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
                     continue;
                 }
             }
-            readyQueue.at(rq).remainingTime--;
-            printf("<time %u> process %u is running\n", clock, readyQueue.at(rq).pid);
         } else {
             rq = 0;
             printf("<time %u> No process is running\n", clock);
         }
         clock++;
-
+        last_switch_clock++;
     }
     return finishedTaskArray;
 }
@@ -126,18 +126,18 @@ queue<task> ShortestJobRemainingFirst(queue<task> taskArray){
             if(readyQueue.at(sjr).remainingTime == readyQueue.at(sjr).cpuTime){
                 readyQueue.at(sjr).startTime = clock;
             }
+            readyQueue.at(sjr).remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.at(sjr).pid);
             if(readyQueue.at(sjr).remainingTime == 0){
-                readyQueue.at(sjr).endTime = clock;
+                readyQueue.at(sjr).endTime = clock+1;
                 finishedTaskArray.push(readyQueue.at(sjr));
-                printf("<time %u> process %u is finished...\n", clock, readyQueue.at(sjr).pid);
+                printf("<time %u> process %u is finished...\n", clock+1, readyQueue.at(sjr).pid);
                 readyQueue.erase(readyQueue.begin()+sjr);
                 sjr = shortestJobRemaining(readyQueue);
                 if(sjr < 0 || readyQueue.at(sjr).remainingTime == 0){
                     continue;
                 }
             }
-            readyQueue.at(sjr).remainingTime--;
-            printf("<time %u> process %u is running\n", clock, readyQueue.at(sjr).pid);
         } else {
             printf("<time %u> No process is running\n", clock);
         }
