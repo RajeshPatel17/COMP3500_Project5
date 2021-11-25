@@ -30,9 +30,9 @@ int main(int argc, char *argv[]){
     queue<task> taskArray;
     queue<task> finishedTaskArray;
 
-    /*Checks if number of arguments is correct*/
+    /* Checks if number of arguments is correct */
     if (argc < 3 || argc > 4) {
-        printf("Usage: command file_name [FCFS|RR|SRTF] [time_quantum]\n");
+        printf("Usage: command file_name [FCFS|RR [time_quantum]|SRTF]\n");
         return 0;
     }
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]){
     } else if(strcmp(argv[2], "SRTF") == 0){
         finishedTaskArray = ShortestJobRemainingFirst(taskArray);
     } else {
-        printf("Usage: command file_name [FCFS|RR|SRTF] [time_quantum]\n");
+        printf("Usage: command file_name [FCFS|RR [time_quantum]|SRTF]\n");
         return 0;
     }
 
@@ -103,6 +103,6 @@ int main(int argc, char *argv[]){
 
     /* Displays data */
     DisplayStatistics(stats);
-    
+
     return EXIT_SUCCESS;
 }

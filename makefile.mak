@@ -1,7 +1,12 @@
-CC = g++
-OBJ = compute.o method.o open.o print.o read.o
+# to use "make"
+# % make -f Makefile.mak *policy*
+# 
+# to run scheduler program
+# ./scheduler file_name [FCFS|RR [time_quantum]|SRTF]
+CC = g++ # g++ compiler
+OBJ = compute.o method.o open.o print.o read.o # all required object files
 
-scheduler: $(OBJ) scheduler.cpp scheduler.hpp
+scheduler: $(OBJ) scheduler.cpp scheduler.hpp # for compiling scheduler
 	@echo "Creating scheduler"
 	$(CC) -o $@ $^ 
 debug: $(OBJ) scheduler.cpp scheduler.hpp
