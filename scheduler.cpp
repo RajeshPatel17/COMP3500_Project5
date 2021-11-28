@@ -96,8 +96,9 @@ int main(int argc, char *argv[]){
  
     printf("There are %u tasks loaded from %s ...\n", (unsigned int)taskArray.size(), fileName);
 
-    printf("Press any key to continue ...\n");
+    printf("Press any key to continue ...");
     getchar();
+    printf("=================================================================\n");
     fclose(file);
 
     /* Runs corresponding scheduling policy with file given */
@@ -116,7 +117,8 @@ int main(int argc, char *argv[]){
     vector<double> stats = ComputeStatistics(finishedTaskArray);
 
     /* Displays data */
+    printf("=================================================================");
     DisplayStatistics(stats);
-
+    printf("=================================================================\n");
     return EXIT_SUCCESS;
 }
