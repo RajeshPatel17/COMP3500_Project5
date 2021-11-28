@@ -5,6 +5,19 @@
 
 using namespace std;
 
+/* INFO: Function to print statistics that were found by ComputeStatistics in compute.cpp
+ * 
+ * ARGS: 
+ *  vector<double>: Statistics to be printed. Must be in this order
+ *  (1): average wait time
+ *  (2): average response time
+ *  (3): average turnaround time
+ *  (4): total cpu usage
+ * 
+ * RETURN: 
+ *  void
+ * 
+ */
 void DisplayStatistics(vector<double> stats) {
     printf("\n");
     printf("average wait time: %.2f\n", stats.at(0));

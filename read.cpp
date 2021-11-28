@@ -5,6 +5,15 @@
 
 using namespace std;
 
+/* INFO: Function to read file specified
+ * 
+ * ARGS: 
+ *  FILE *file: pointer to file to be read
+ * 
+ * RETURN: 
+ *  queue<task>: a queue of tasks that were read from file to be simulated
+ * 
+ */
 queue<task> readFile(FILE *file){
     queue<task> taskArray;
     task *t = new task; //https://docs.microsoft.com/en-us/cpp/cpp/new-operator-cpp?view=msvc-170#:~:text=When%20new%20is%20used%20to%20allocate%20memory%20for,deallocate%20the%20memory%20allocated%20with%20the%20new%20operator.

@@ -209,6 +209,7 @@ int shortestJobRemaining(vector<task> taskQueue){
     }
     return index;
 }
+
 /* INFO: Shortest Remaining Task First scheduling policy
  * 
  * ARGS: 

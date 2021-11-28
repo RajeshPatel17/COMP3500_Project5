@@ -1,6 +1,7 @@
 #ifndef _SCHEDULER_HPP
 #define _SCHEDULER_HPP
 
+/* task struct that describes all characteristics of a task instance */
 typedef struct task {
     unsigned int pid;
     unsigned int startTime;

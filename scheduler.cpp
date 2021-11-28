@@ -23,6 +23,20 @@
 
 using namespace std;
 
+/* INFO: Main function that will simulate a scheduling policy given a policy and file with tasks to be simulated 
+ * 
+ * ARGS: 
+ *  int argc: number of arguments passed to the executable (or size of argv)
+ *  char *argv[]: arguments passed to the executable
+ *      (1): file to be opened and tasks to be read from
+ *      (2): Scheduling policy to be used [FCFS|RR|SRTF]
+ *      (3): CONDITIONAL -> For RR policy. If RR is chosen, then integer must be entered to serve as time quantum
+ *      
+ * 
+ * RETURN: 
+ *  int: returns status of execution
+ * 
+ */
 int main(int argc, char *argv[]){
 
     char *fileName;
@@ -48,7 +62,7 @@ int main(int argc, char *argv[]){
             printf("time_quantum is set to %s\n", argv[3]);
         } else {
             printf("Please enter time_quantum for the RR policy!\n");
-            return 0;
+            return EXIT_FAILURE;
         }
     }
 
