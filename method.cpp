@@ -93,8 +93,7 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
 
     int last_switch_clock = 0; /* how many TU ago a process switched */
     unsigned int clock = 0;
-    int rq = 0; /* indexer of which process is running */
-    vector<task> readyQueue;
+    queue<task> readyQueue;
     queue<task> finishedTaskArray;
 
     while(!taskArray.empty() || !readyQueue.empty()){
@@ -102,7 +101,7 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
         /* adds tasks whose arrival time is after the current time */
         while(!taskArray.empty() && taskArray.front().arrivalTime <= clock){
 
-            readyQueue.push_back(taskArray.front());
+            readyQueue.push(taskArray.front());
             taskArray.pop();
 
         }
@@ -112,37 +111,26 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
 
             /* switches process if clock is greater equal to time quantum */
             if(last_switch_clock >= time_quantum){
-
+                readyQueue.push(readyQueue.front());
+                readyQueue.pop();
                 last_switch_clock = 0;
-                rq++;
-
-                /* resets indexer to 0 if out of bounds */
-                if(rq >= readyQueue.size()){ 
-                    rq = 0;
-                }
-
             }
 
-            /* starts task being pointed to at indexer in correspondence of Round Robin policy */
-            if(readyQueue.at(rq).remainingTime == readyQueue.at(rq).cpuTime){
-                readyQueue.at(rq).startTime = clock;
+            /* starts at front which is in correspondence of Round Robin policy */
+            if(readyQueue.front().remainingTime == readyQueue.front().cpuTime){
+                readyQueue.front().startTime = clock;
             }
 
-            readyQueue.at(rq).remainingTime--;
-            printf("<time %u> process %u is running\n", clock, readyQueue.at(rq).pid);
+            readyQueue.front().remainingTime--;
+            printf("<time %u> process %u is running\n", clock, readyQueue.front().pid);
 
             /* if current task is finished, then put task to rest */
-            if(readyQueue.at(rq).remainingTime == 0){
+            if(readyQueue.front().remainingTime == 0){
 
-                readyQueue.at(rq).endTime = clock+1;
-                finishedTaskArray.push(readyQueue.at(rq));
-                printf("<time %u> process %u is finished...\n", clock+1, readyQueue.at(rq).pid);
-                readyQueue.erase(readyQueue.begin()+rq);
-                
-                /* resets indexer to beginning if it is now out of bounds since readyQueue is shortened with task removal */
-                if(rq >= readyQueue.size()){
-                    rq = 0;
-                }
+                readyQueue.front().endTime = clock+1;
+                finishedTaskArray.push(readyQueue.front());
+                printf("<time %u> process %u is finished...\n", clock+1, readyQueue.front().pid);
+                readyQueue.pop();
 
                 /* resets last_switch_clock. -1 is for corner case. It gets corrected 
                  * since it will be incremented to 0 at the end of this if block.
@@ -157,15 +145,14 @@ queue<task> RoundRobin(queue<task> taskArray, int time_quantum){
 
                 } else if(readyQueue.empty() && !taskArray.empty()){  /* restarts loop if arrived tasks are empty but not arrived tasks is not empty */
                     continue;
-                }else if(readyQueue.at(rq).remainingTime==readyQueue.at(rq).cpuTime){ /* starts next task if available */
-                    readyQueue.at(rq).startTime=clock;
-                } else if(readyQueue.at(rq).remainingTime == 0){ /* corner case of next assumed task has remaining time of 0 but was not closed */
+                }else if(readyQueue.front().remainingTime==readyQueue.front().cpuTime){ /* starts next task if available */
+                    readyQueue.front().startTime=clock;
+                } else if(readyQueue.front().remainingTime == 0){ /* corner case of next assumed task has remaining time of 0 but was not closed */
                     continue;
                 }
             }
         } else {
-            /* else resets indexer and no task is currently running */
-            rq = 0;
+            /* else last switch clock and no task is currently running */
             last_switch_clock = -1;
             printf("<time %u> No process is running\n", clock);
         }
