@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
         if (argc == 4){
             sscanf(argv[3], "%d", &time_quantum);
             if(time_quantum<1){
-                printf("Invalid time_quantum, please enter value of 1 or greater");
+                printf("Invalid time_quantum, please enter value of 1 or greater\n");
                 return EXIT_FAILURE;
             }
             printf("time_quantum is set to %s\n", argv[3]);

@@ -1,3 +1,8 @@
+/* References
+ * 
+ *  Line 24: I referenced this documentation to learn how to utilize the 'new' operator. 
+ *  Line 25: I referenced this documentation as I was attempting to use the '.' operator to access "task" variables but learned I needed to use the arrow operator.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <queue>
